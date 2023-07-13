@@ -1,19 +1,36 @@
-const {firebase,auth} = require('../config.js');
+const {firebase,auth,admin,db} = require('../config.js');
 const bcrypt = require('bcrypt');
 
 const userModel = {
-    signUp(data){
-        // Đăng ký người dùng mới bằng email/password
-        return auth.createUserWithEmailAndPassword(data.email,data.password);
+    createUser(data){
+        //Dùng bcrypt để hash password kết quả trả về sẽ đưa vào thông tin user
+        //Lưu ý fireBase cũng đã tự hashing password bằng fireBaseAuth 
+        //=> tại Account cũng có password nhưng firebase 
+        //không cho phép gọi và sử dụng thuộc tính passwordHash
+        bcrypt.hash(data.password, 10)
+        .then((bcryptPass)=>{
+            //tạo thông tin user
+            db.collection('users').doc().set({
+                email : data.email,
+                username : data.username,
+                password : bcryptPass,
+                role : data.role,
+                active : data.active
+            })
+            .then((user)=>{
+                console.log(user);
+            })
+            .catch((error) => {
+                res.send({code:err.code,msg:err.message});
+            });
+        })
+        .catch((error) => {
+            res.send({code:err.code,msg:err.message});
+        })
     },
-    signIn(data){
-        // Đăng nhập người dùng mới bằng email/password
-        return auth.signInWithEmailAndPassword(data.email,data.password);
-    },
-    signInWithGoogle(){
-        // const provider = new firebase.auth.GoogleAuthProvider();
-
-        // return auth.signInWithPopup(provider)
+    getUserInforByEmail(email){ //Tìm UserInf bằng email sau đó trả về 1 promise
+        const query = db.collection('users').where('email', '==', email);
+        return query.get();
     }
 }
 

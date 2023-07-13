@@ -1,6 +1,14 @@
 const firebase = require('firebase/compat/app');
 require('firebase/compat/auth');
 require('firebase/compat/firestore');
+const admin = require('firebase-admin');
+const serviceAccount = require('./src/serviceAccountKey/serviceAccountKey.json');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  // Thêm các thông tin cấu hình khác của bạn
+});
+
 
 // Khởi tạo ứng dụng Firebase
 const firebaseConfig = {
@@ -14,4 +22,6 @@ const firebaseConfig = {
 };
 const app = firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-module.exports = {firebase,auth};
+const db = admin.firestore();
+
+module.exports = {firebase,auth,admin,db};
