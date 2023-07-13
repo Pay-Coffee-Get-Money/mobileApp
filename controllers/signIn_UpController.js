@@ -1,7 +1,8 @@
 const accountModel = require('../models/accountModel.js');
 const userModel = require('../models/userModel.js');
 
-const UserControllers = {
+const signIn_UpController = {
+    passCode:null,
     signUp: function (req, res){
         const data = req.body;
         accountModel.signUp(data)
@@ -12,10 +13,10 @@ const UserControllers = {
             // một user collection để lưu các thuộc tính thông tin cần thiết
             // mà fireBaseAth không cấp
             userModel.createUser(data);
-            res.send({code:0,msg:"User added"});
+            res.json({code:0,msg:"User added"});
         })
         .catch((err) => {
-            res.send({code:err.code,msg:err.message});
+            res.json({code:err.code,msg:err.message});
         })
     },
     signIn(req,res){
@@ -28,29 +29,40 @@ const UserControllers = {
             userModel.getUserInforByEmail(data.email)
             .then((snapshot) => {
                 if (snapshot.empty) {
-                    res.send({code:2,msg:"User not found"});
+                    res.json({code:2,msg:"User not found"});
                 } 
                 else {
                     snapshot.forEach((doc) => {
                         const userInf = doc.data();
                         console.log(userInf);
                         //Đăng nhập thành công trả về thông tin Account join với User
-                        res.send({code:0,accountUser:{...result,...userInf}});
+                        res.json({code:0,accountUser:{...result,...userInf}});
                     });
                 }
             })
             .catch((err)=>{
                 console.log(err);
-                res.send({code:3,msg:"Error getting user"});
+                res.json({code:3,msg:"Error getting user"});
             })
         })
         .catch((err) => {
-            res.send({code:err.code,msg:err.message});
+            res.json({code:err.code,msg:err.message});
         })
     },
-    async signInWithGoogle(req,res){
+    signInWithGoogle(req,res){
         // await accountModel.signInWithGoogle();
+    },
+    forgotPassword(req,res){
+        const userEmail = req.body.email;
+
+        accountModel.resetPassword(userEmail)
+        .then(() => {
+            res.json({code:0,msg:"Verification code sent successfully, please check your email!"});
+        })
+        .catch((error) => {
+            res.json({code: "err",msg:err});
+        });
     }
 }
 
-module.exports = UserControllers;
+module.exports = signIn_UpController;
