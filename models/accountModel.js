@@ -1,6 +1,4 @@
 const {firebase,auth,admin} = require('../config.js');
-const bcrypt = require('bcrypt');
-
 
 const accountModel = {
     signUp(data){
@@ -14,6 +12,9 @@ const accountModel = {
     signInWithGoogle(){
         // const provider = new firebase.auth.GoogleAuthProvider();
         // return firebase.auth().signInWithPopup(provider);
+    },
+    resetPassword(email){
+        return firebase.auth().sendPasswordResetEmail(email)
     }
 }
 
