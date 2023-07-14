@@ -1,7 +1,7 @@
 const accountModel = require('../models/accountModel.js');
 const userModel = require('../models/userModel.js');
 
-const signIn_UpController = {
+const authentication = {
     passCode:null,
     signUp: function (req, res){
         const data = req.body;
@@ -65,4 +65,4 @@ const signIn_UpController = {
     }
 }
 
-module.exports = signIn_UpController;
+module.exports = authentication;
