@@ -4,5 +4,6 @@ const express = require('express');
 const authentication = require("./authentication");
 const termManagament = require("./termManagament");
 const subjectManagament = require("./subjectManagament");
+const courseManagament = require("./courseManagament");
 
-module.exports = {authentication,termManagament,subjectManagament};
+module.exports = {authentication,termManagament,subjectManagament,courseManagament};
