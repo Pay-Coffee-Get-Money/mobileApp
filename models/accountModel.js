@@ -1,4 +1,4 @@
-const {firebase,auth,admin} = require('../config.js');
+const {firebase,auth} = require('../config.js');
 
 const accountModel = {
     signUp(data){

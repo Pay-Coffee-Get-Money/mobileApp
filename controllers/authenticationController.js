@@ -2,7 +2,6 @@ const accountModel = require('../models/accountModel.js');
 const userModel = require('../models/userModel.js');
 
 const authentication = {
-    passCode:null,
     signUp: function (req, res){
         const data = req.body;
         accountModel.signUp(data)

@@ -1,11 +1,25 @@
 const express = require('express');
 const app = express();
-const {authentication} = require('./routes/index');
+const {authentication,termManagament,subjectManagament,courseManagament} = require('./routes/index');
 const cors = require('cors');
+const path = require('path');
+const bodyParser = require('body-parser');
+
+// Sử dụng middleware body-parser để xử lý dữ liệu URL-encoded
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// Sử dụng middleware body-parser để xử lý dữ liệu JSON
+app.use(bodyParser.json());
+
+// Cấu hình middleware để phục vụ các tệp tĩnh từ thư mục 'src'
+app.use(express.static(path.join(__dirname, 'src')));
 
 app.use(express.json());
 app.use(cors());
 app.use('/',authentication);
+app.use('/',termManagament);
+app.use('/',subjectManagament);
+app.use('/',courseManagament);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, ()=>{

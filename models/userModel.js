@@ -1,4 +1,4 @@
-const {firebase,auth,admin,db} = require('../config.js');
+const {db} = require('../config.js');
 
 const userModel = {
     createUser(data){
