@@ -45,9 +45,12 @@ const courseModel = {
     },
     async getCourseById(courseId){
         try{
-            const query = db.collection("courses").doc(courseId)
-            const result = await query.get();
-            return {id:courseId,...result.data()}; 
+            if(await this.checkExistCourse(courseId)){
+                const query = db.collection("courses").doc(courseId)
+                const result = await query.get();
+                return {id:courseId,...result.data()}; 
+            }
+            return {code:"Course getting error",message:"Course does not exist"}; 
         }catch(err){
             return {code:err.code,message:err.details};
         }
