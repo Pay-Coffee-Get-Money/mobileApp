@@ -6,5 +6,6 @@ const termManagament = require("./termManagament");
 const subjectManagament = require("./subjectManagament");
 const courseManagament = require("./courseManagament");
 const topicManagament = require("./topicManagament");
+const groupManagament = require("./groupManagament");
 
-module.exports = {authentication,termManagament,subjectManagament,courseManagament,topicManagament};
+module.exports = {authentication,termManagament,subjectManagament,courseManagament,topicManagament,groupManagament};

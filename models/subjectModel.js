@@ -87,7 +87,7 @@ const subjectModel = {
             return {code:"Subject getting err", message:"An error occurred during the get process"};
         }
     },
-    async checkExistSubject(id){                           //Hàm kiểm tra Subject có tồm tại hay không bằng cách sử dụng subjectID
+    async checkExistSubject(id){                           //Hàm kiểm tra Subject có tồn tại hay không bằng cách sử dụng subjectID
         const query = db.collection("subjects").doc(id);
         const result = await query.get();
         if(result.exists){

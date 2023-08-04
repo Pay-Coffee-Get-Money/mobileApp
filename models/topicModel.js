@@ -15,7 +15,7 @@ const topicModel = {
         const result = await query.get();
         const data = [];
         result.forEach((item) => {
-            data.push({id:item.id,...item.data()});
+            data.push({id: item.id,...item.data()});
         })
         return data;
       }catch(err){
@@ -52,7 +52,7 @@ const topicModel = {
             return {code:err.code,message:err.details};
         }
     },
-    async checkExistTopic(id){                           //Hàm kiểm tra Course có tồm tại hay không bằng cách sử dụng courseID
+    async checkExistTopic(id){                           //Hàm kiểm tra Topic có tồn tại hay không bằng cách sử dụng courseID
         const query = db.collection("topics").doc(id);
         const result = await query.get();
         if(result.exists){
