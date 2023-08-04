@@ -26,8 +26,8 @@ const subjectModel = {
             //đưa các dữ liệu subjects vào mảng mới rồi trả về mảng sau khi thêm
             result.forEach((item) => {
                 const idSubject = item.id;
-                const subjectInfors = item.data();
-                data.push({id:idSubject, subjectInfors});
+                const {...subjectInfors} = item.data();
+                data.push({id:idSubject, ...subjectInfors});
             });
             return data;
         }catch(err){
