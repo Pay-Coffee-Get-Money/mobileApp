@@ -1,6 +1,15 @@
 const express = require('express');
 const app = express();
-const {authentication,termManagament,subjectManagament,courseManagament,topicManagament,groupManagament} = require('./routes/index');
+
+const {authentication,
+    termManagament,
+    subjectManagament,
+    courseManagament,
+    topicManagament,
+    groupManagament,
+    classManagament
+} = require('./routes/index');
+
 const cors = require('cors');
 const path = require('path');
 const bodyParser = require('body-parser');
@@ -22,6 +31,7 @@ app.use('/',subjectManagament);
 app.use('/',courseManagament);
 app.use('/',topicManagament);
 app.use('/',groupManagament);
+app.use('/',classManagament);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, ()=>{

@@ -52,7 +52,7 @@ const groupModel = {
             return {code: err.code, message: err.details};
         }
     },
-    async checkExistGroup(id){                           //Hàm kiểm tra group có tồn tại hay không bằng cách sử dụng courseID
+    async checkExistGroup(id){                           //Hàm kiểm tra group có tồn tại hay không bằng cách sử dụng groupID
         const query = db.collection("groups").doc(id);
         const result = await query.get();
         if(result.exists){

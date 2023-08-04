@@ -52,7 +52,7 @@ const topicModel = {
             return {code:err.code,message:err.details};
         }
     },
-    async checkExistTopic(id){                           //Hàm kiểm tra Topic có tồn tại hay không bằng cách sử dụng courseID
+    async checkExistTopic(id){                           //Hàm kiểm tra Topic có tồn tại hay không bằng cách sử dụng topicID
         const query = db.collection("topics").doc(id);
         const result = await query.get();
         if(result.exists){
