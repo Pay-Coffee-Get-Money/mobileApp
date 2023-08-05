@@ -3,7 +3,6 @@ const fileController = {
         res.json(req.result);
     },
     exportFile(req,res){
-        console.log(req.result)
         if(req.result.code == "Type error"){
             res.json(req.result);
         }

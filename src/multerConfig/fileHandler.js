@@ -24,7 +24,7 @@ const fileHandler = {
         return data;
     },
     handle_import_files(req,res,next){
-        const type = req.body.typeModel;
+        const type = req.params.model;
         const rsTypeChecking = fileHandler.checkType(type,'import'); //Kiểm tra loại model được gửi lên server để lấy được model và method tương ứng để xử dụng
         if(rsTypeChecking.code == "Type error"){
             req.result = rsTypeChecking;
@@ -46,7 +46,7 @@ const fileHandler = {
         }
     },
     async handle_export_files(req,res,next){
-        const type = req.body.typeModel;
+        const type = req.params.model;
         const rsTypeChecking = fileHandler.checkType(type,'export');  //Kiểm tra loại model được gửi lên server để lấy được model và method tương ứng để xử dụng
         if(rsTypeChecking.code == "Type error"){                      //Trả về lỗi nếu loại model không có 
             req.result = rsTypeChecking;
