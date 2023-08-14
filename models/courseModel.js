@@ -52,7 +52,7 @@ const courseModel = {
             return {code:err.code,message:err.details};
         }
     },
-    async checkExistCourse(id){                           //Hàm kiểm tra Course có tồm tại hay không bằng cách sử dụng courseID
+    async checkExistCourse(id){                           //Hàm kiểm tra Course có tồn tại hay không bằng cách sử dụng courseID
         const query = db.collection("courses").doc(id);
         const result = await query.get();
         if(result.exists){
