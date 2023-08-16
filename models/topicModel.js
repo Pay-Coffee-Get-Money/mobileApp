@@ -50,7 +50,7 @@ const topicModel = {
             if(result.data() != null){
                 return {id:topicId,...result.data()}; 
             }
-            return {code:"Topic updating error",message:"Topic does not exist"}; 
+            return {code:"Topic reading error",message:"Topic does not exist"}; 
         }catch(err){
             return {code:err.code,message:err.details};
         }

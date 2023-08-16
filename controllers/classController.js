@@ -42,7 +42,7 @@ const classController = {
             const classId = req.params.id;
             const result = await classModel.getClassById(classId);
             res.json(result);
-        }catch(e){
+        }catch(err){
             res.json({code: err.code, message: err.details});
         }
     }

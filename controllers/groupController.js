@@ -42,7 +42,7 @@ const groupController = {
             const groupId = req.params.id;
             const result = await groupModel.getGroupById(groupId);
             res.json(result);
-        }catch(e){
+        }catch(err){
             res.json({code: err.code, message: err.details});
         }
     }

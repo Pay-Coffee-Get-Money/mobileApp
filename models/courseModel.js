@@ -50,7 +50,7 @@ const courseModel = {
                 const result = await query.get();
                 return {id:courseId,...result.data()}; 
             }
-            return {code:"Course getting error",message:"Course does not exist"}; 
+            return {code:"Course reading error",message:"Course does not exist"}; 
         }catch(err){
             return {code:err.code,message:err.details};
         }

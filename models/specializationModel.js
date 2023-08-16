@@ -50,7 +50,7 @@ const specializationModel = {
             if(result.data() != null){
                 return {id: Id, ...result.data()}; 
             }
-            return {code: "Specialization updating error", message: "Specialization does not exist"}; 
+            return {code: "Specialization reading error", message: "Specialization does not exist"}; 
         }catch(err){
             return {code: err.code, message: err.details};
         }

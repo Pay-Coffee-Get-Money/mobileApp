@@ -9,7 +9,9 @@ const {authentication,
     groupManagament,
     classManagament,
     specializationManagament,
-    fileManagament
+    fileManagament,
+    userManagament,
+    academicYearManagament
 } = require('./routes/index');
 
 const cors = require('cors');
@@ -35,7 +37,9 @@ app.use('/',topicManagament);
 app.use('/',groupManagament);
 app.use('/',classManagament);
 app.use('/',specializationManagament);
-app.use('/',fileManagament)
+app.use('/',fileManagament);
+app.use('/',userManagament);
+app.use('/',academicYearManagament);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, ()=>{

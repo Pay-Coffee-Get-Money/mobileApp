@@ -50,7 +50,7 @@ const groupModel = {
             if(result.data() != null){
                 return {id: groupId, ...result.data()}; 
             }
-            return {code: "Group updating error", message: "Group does not exist"}; 
+            return {code: "Group reading error", message: "Group does not exist"}; 
         }catch(err){
             return {code: err.code, message: err.details};
         }

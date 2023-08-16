@@ -42,7 +42,7 @@ const specializationController = {
             const Id = req.params.id;
             const result = await specializationModel.getSpecializationById(Id);
             res.json(result);
-        }catch(e){
+        }catch(err){
             res.json({code: err.code, message: err.details});
         }
     }

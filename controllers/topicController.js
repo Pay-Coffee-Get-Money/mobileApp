@@ -42,7 +42,7 @@ const topicController = {
             const topicId = req.params.id;
             const result = await topicModel.getTopicById(topicId);
             res.json(result);
-        }catch(e){
+        }catch(err){
             res.json({code:err.code,message:err.details});
         }
     }

@@ -82,7 +82,7 @@ const subjectModel = {
             if(result.exists){
                 return {id, subjectInfors:result.data()};
             }
-            return {code:"Subject getting err", message:"Subject does not exist"}; 
+            return {code:"Subject reading err", message:"Subject does not exist"}; 
         }catch(e){
             return {code:"Subject getting err", message:"An error occurred during the get process"};
         }

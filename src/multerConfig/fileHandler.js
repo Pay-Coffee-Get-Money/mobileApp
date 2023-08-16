@@ -1,6 +1,7 @@
 const xlsx = require('xlsx');
 const path = require('path');
 const subjectModel = require('../../models/subjectModel');
+const topicModel = require('../../models/topicModel');
 
 const fileHandler = {
     importExcelFile(file){
@@ -87,6 +88,11 @@ const fileHandler = {
                 return {
                     model: subjectModel,
                     method: operation !== "import" ? 'readSubject' : 'createSubject'
+                }
+            case 'topic':
+                return {
+                    model: topicModel,
+                    method: operation !== "import" ? 'readTopic' : 'createTopic'
                 }
             default:
                 return {code: "Type error", message: "This type is not available"};

@@ -1,4 +1,4 @@
-const {firebase,auth} = require('../config.js');
+const {firebase,auth,admin} = require('../config.js');
 
 const accountModel = {
     signUp(data){
@@ -15,6 +15,15 @@ const accountModel = {
     },
     resetPassword(email){
         return firebase.auth().sendPasswordResetEmail(email)
+    },
+    async deleteAccount(email){
+        try{
+            const {uid} = await admin.auth().getUserByEmail(email);
+            const result = await admin.auth().deleteUser(uid);
+            return result;
+        }catch(err){
+            return err;
+        }
     }
 }
 

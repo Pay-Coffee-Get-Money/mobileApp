@@ -82,7 +82,7 @@ const termModel = {
             if(result.exists){
                 return {id, termInfors:result.data()};
             }
-            return {code:"Term getting err", message:"Term does not exist"}; 
+            return {code:"Term reading err", message:"Term does not exist"}; 
         }catch(e){
             return {code: "Term getting err", message: e.message};
         }
