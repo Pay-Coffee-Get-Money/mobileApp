@@ -6,10 +6,11 @@ const termModel = {
             //Xử lý bất đồng bộ sau khi thêm doc vào collection database
             //Nếu thêm thành công thì trả về code 0
             //Thât bại về thông tin lỗi
+        console.log(termInfors)
             const result = await db.collection('terms').doc().set({
-                name:termInfors['name'],
-                start_day:new Date(termInfors['start_day']),
-                end_day:new Date(termInfors['end_day'])
+                name: termInfors['name'],
+                start_day: termInfors['start_day'] == "" ? "" : new Date(termInfors['start_day']),
+                end_day: termInfors['start_day'] == "" ? "" : new Date(termInfors['end_day']) 
             })
             return {code:0, message:`successfully create term: ${termInfors['name']}`};
         }catch(err){
@@ -83,7 +84,7 @@ const termModel = {
             }
             return {code:"Term getting err", message:"Term does not exist"}; 
         }catch(e){
-            return {code:"Term getting err", message:"An error occurred during the get process"};
+            return {code: "Term getting err", message: e.message};
         }
     },
     async checkExistTerm(id){                           //Hàm kiểm tra Term có tồn tại hay không bằng cách sử dụng termID

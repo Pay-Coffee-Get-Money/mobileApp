@@ -11,17 +11,18 @@ const subjectController = {
         res.json(data);
     },
     async updateSubject (req,res){
-        const {id,...newSubjectInfors} = req.body;
+        const newSubjectInfors = req.body;
+        const id = req.params.id;
         const result = await subjectModel.updateSubject(id,newSubjectInfors);
         res.json(result);
     },
     async deleteSubject(req, res) {
-        const id = req.body.id;
+        const id = req.params.id;
         const result = await subjectModel.deleteSubject(id);
         res.json(result);
     },
     async getSubjectById(req, res) {
-        const id = req.body.id;
+        const id = req.params.id;
         const result = await subjectModel.getSubjectById(id);
         res.json(result);
     }

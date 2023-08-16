@@ -20,7 +20,8 @@ const courseController = {
     },
     async updateCourse(req,res){
         try{
-            const {id,...newCourseInfors} = req.body;
+            const newCourseInfors = req.body;
+            const id = req.params.id;
             const result = await courseModel.updateCourse(id,newCourseInfors);
             res.json(result);
         }catch(err){
@@ -29,7 +30,7 @@ const courseController = {
     },
     async deleteCourse(req,res){
         try{
-            const courseId = req.body.id;
+            const courseId = req.params.id;
             const result = await courseModel.deleteCourse(courseId);
             res.json(result);
         }catch(err){
@@ -38,10 +39,10 @@ const courseController = {
     },
     async getCourseById(req,res){
         try{
-            const courseId = req.body.id;
+            const courseId = req.params.id;
             const result = await courseModel.getCourseById(courseId);
             res.json(result);
-        }catch(e){
+        }catch(err){
             res.json({code:err.code,message:err.details});
         }
     }
