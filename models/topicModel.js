@@ -47,7 +47,10 @@ const topicModel = {
         try{
             const query = db.collection("topics").doc(topicId)
             const result = await query.get();
-            return {id:topicId,...result.data()}; 
+            if(result.data() != null){
+                return {id:topicId,...result.data()}; 
+            }
+            return {code:"Topic updating error",message:"Topic does not exist"}; 
         }catch(err){
             return {code:err.code,message:err.details};
         }

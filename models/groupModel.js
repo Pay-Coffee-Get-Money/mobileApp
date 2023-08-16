@@ -47,7 +47,10 @@ const groupModel = {
         try{
             const query = db.collection("groups").doc(groupId);
             const result = await query.get();
-            return {id: groupId, ...result.data()}; 
+            if(result.data() != null){
+                return {id: groupId, ...result.data()}; 
+            }
+            return {code: "Group updating error", message: "Group does not exist"}; 
         }catch(err){
             return {code: err.code, message: err.details};
         }

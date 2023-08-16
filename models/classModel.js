@@ -47,10 +47,10 @@ const classModel = {
         try{
             const query = db.collection("classes").doc(classId);
             const result = await query.get();
-            if(result.data().exists){
+            if(result.data() != null){
                 return {id: classId, ...result.data()}; 
             }
-            return {code: err.code, message: err.details};
+            return {code: "Class reading error", message: "Class does not exist"}; 
         }catch(err){
             return {code: err.code, message: err.details};
         }
