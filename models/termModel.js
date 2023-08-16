@@ -87,7 +87,7 @@ const termModel = {
             return {code: "Term getting err", message: e.message};
         }
     },
-    async checkExistTerm(id){                           //Hàm kiểm tra Term có tồm tại hay không bằng cách sử dụng termID
+    async checkExistTerm(id){                           //Hàm kiểm tra Term có tồn tại hay không bằng cách sử dụng termID
         const query = db.collection("terms").doc(id);
         const result = await query.get();
         if(result.exists){
