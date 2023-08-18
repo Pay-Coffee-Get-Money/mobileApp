@@ -1,3 +1,5 @@
+const {firebase,auth,admin} = require('../config.js');
+
 const accountModel = require('../models/accountModel.js');
 const userModel = require('../models/userModel.js');
 
@@ -6,13 +8,19 @@ const authentication = {
         const data = req.body;
         accountModel.signUp(data)
         .then((userCredential) => {
-            console.log(userCredential);
-            //Sau khi đăng ký thành công  lúc này 
-            // tạo song song với account collect của fireBaseAuth 
-            // một user collection để lưu các thuộc tính thông tin cần thiết
-            // mà fireBaseAth không cấp
-            userModel.createUser(data);
-            res.json({code:0,msg:"User added"});
+            const user = userCredential.user;
+            //Gửi mail xác thực 
+            accountModel.verifyEmail(user)            
+            .then(() => {
+                 //Sau khi đăng ký thành công  lúc này 
+                // tạo song song với account collect của fireBaseAuth 
+                // một user collection để lưu các thuộc tính thông tin cần thiết
+                // mà fireBaseAth không cấp
+                userModel.createUser(data);
+                //Ta trả về thông báo kiểm tra email
+                res.json({code: "Verification email", msg: "Please check your email to complete the account creation verification process"});
+            })
+            .catch(err => res.json({code: err.code, msg: err.message}))
         })
         .catch((err) => {
             res.json({code:err.code,msg:err.message});
@@ -20,29 +28,42 @@ const authentication = {
     },
     signIn(req,res){
         const data = req.body;
-        //Sử lý đăng nhập qua accountModel
+        //Xử lý đăng nhập qua accountModel
         accountModel.signIn(data)
-        .then((result) => {
-            //lấy thông tin user bằng email sau khi đăng nhập thành công
-            //hàm này trả về 1 promise
-            userModel.getUserInforByEmail(data.email)
-            .then((snapshot) => {
-                if (snapshot.empty) {
-                    res.json({code:2,msg:"User not found"});
-                } 
-                else {
-                    snapshot.forEach((doc) => {
-                        const userInf = doc.data();
-                        console.log(userInf);
-                        //Đăng nhập thành công trả về thông tin Account join với User
-                        res.json({code:0,accountUser:{...result,...userInf}});
-                    });
-                }
-            })
-            .catch((err)=>{
-                console.log(err);
-                res.json({code:3,msg:"Error getting user"});
-            })
+        .then((user) => {
+            //Kiểm tra tài khoản đã xác thực hay chưa
+            //Nếu đã xác thực sẽ trả về thông tin user
+            if (!user.user.emailVerified) {
+                return 1;
+            } else{
+                return user;
+            }
+        })
+        .then((rs) => {
+            if(rs == 1){
+                //Trả về thông báo email chưa xác thực 
+                res.json({code: "Login error", msg: "User's email has not been verified yet, please check your email to countinue login"});
+            }else{
+                //lấy thông tin user bằng email sau khi đăng nhập thành công
+                //hàm này trả về 1 promise
+                userModel.getUserInforByEmail(rs.user.email)
+                .then((snapshot) => {
+                    if (snapshot.empty || snapshot.length === 0 || snapshot === null) {
+                        res.json({code:2,msg:"User not found"});
+                    } 
+                    else {
+                        let userInf;
+                        snapshot.forEach((doc) => {
+                            userInf = doc.data();
+                            //Đăng nhập thành công trả về thông tin Account join với User
+                        });
+                        res.json({code:0,accountUser:{...rs,...userInf}});
+                    }
+                })
+                .catch((err)=>{
+                    res.json({code:3,msg:"Error getting user"});
+                })
+            }
         })
         .catch((err) => {
             res.json({code:err.code,msg:err.message});
