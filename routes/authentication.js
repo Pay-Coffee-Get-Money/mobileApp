@@ -4,7 +4,7 @@ const authenticationController = require('../controllers/authenticationControlle
 
 route.post('/signUp',authenticationController.signUp);
 route.post('/signIn',authenticationController.signIn);
-route.post('/signIn/google',authenticationController.signInWithGoogle);
-route.post('/signIn/forgotPassword',authenticationController.forgotPassword);
+route.post('/signIn/:email',authenticationController.forgotPassword);
+route.post('/signOut',authenticationController.signOut);
 
 module.exports = route;

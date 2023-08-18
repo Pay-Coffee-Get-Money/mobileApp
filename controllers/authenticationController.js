@@ -69,11 +69,17 @@ const authentication = {
             res.json({code:err.code,msg:err.message});
         })
     },
-    signInWithGoogle(req,res){
-        // await accountModel.signInWithGoogle();
+    signOut(req,res){
+        accountModel.signOut()
+        .then(() => {
+            res.json({code: 0, msg: "User logged out successfully"})
+          })
+          .catch((error) => {           
+            res.json({code: 1, msg: "Logged out error"})
+          });
     },
     forgotPassword(req,res){
-        const userEmail = req.body.email;
+        const userEmail = req.params.email;
 
         accountModel.resetPassword(userEmail)
         .then(() => {
