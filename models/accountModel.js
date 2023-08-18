@@ -3,7 +3,9 @@ const {firebase,auth,admin} = require('../config.js');
 const accountModel = {
     signUp(data){
         // Đăng ký người dùng mới bằng email/password
-        return auth.createUserWithEmailAndPassword(data.email,data.password);
+        const email = data.email;
+        const password = data.password;
+        return auth.createUserWithEmailAndPassword(email,password);
     },
     signIn(data){
         // Đăng nhập người dùng mới bằng email/password
@@ -15,6 +17,9 @@ const accountModel = {
     },
     resetPassword(email){
         return firebase.auth().sendPasswordResetEmail(email)
+    },
+    verifyEmail(currentUser){
+        return currentUser.sendEmailVerification();
     },
     async deleteAccount(email){
         try{
