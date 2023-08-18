@@ -1,10 +1,18 @@
 const {db} = require('../config');
+const qrHandler = require('../src/qrCode/qrHandler');
 
 const groupModel = {
     async createGroup(groupInfors){
         try{
-            const result = await db.collection("groups").doc().set(groupInfors)
-            return {code: 0, message: "Successfully create group"};
+            const docRef = await db.collection("groups").doc();         // Tạo tài liệu mới và lấy tham chiếu
+            const docId = docRef.id;                                    // Lấy ID của tài liệu vừa tạo
+            const groupQr = await qrHandler.createQR(docId);            // Tạo mã QR từ groupID 
+            if(groupQr.code == 1){                                      // Kiểm tra có lỗi trong quá trình tạo QR hay không
+                return {code: groupQr.code, message: "There was an error while generating the group QR code, please try again"};
+            }else{
+                const result = await docRef.set({...groupInfors, groupQr}); // Đặt dữ liệu cho tài liệu bao gồm mã QR
+                return {code: 0, message: "Successfully create group"};
+            }
         }catch(err){
             return {code: err.code, message: err.details};
         }
