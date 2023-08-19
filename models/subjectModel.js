@@ -1,3 +1,4 @@
+const { name } = require('ejs');
 const {db} = require('../config.js');
 
 const subjectModel = {
@@ -6,12 +7,7 @@ const subjectModel = {
             //Xử lý bất đồng bộ sau khi thêm doc vào collection database
             //Nếu thêm thành công thì trả về code 0
             //Thât bại về thông tin lỗi
-            const result = await db.collection('subjects').doc().set({
-                "code": subjectInfors['code'],
-                "name": subjectInfors['name'],
-                "credit": subjectInfors['credit'],
-                "active": subjectInfors['active']
-            })
+            const result = await db.collection('subjects').doc().set(subjectInfors)
             return {code:0, message:`Successfully create subject: ${subjectInfors['name']}`};
         }catch(err){
             return {code:err.code, message:err.message};
@@ -40,7 +36,7 @@ const subjectModel = {
             //có tồn tại hay không 
             //nếu tồn tại mới tiếp tục thực hiện update
             //nếu không tồn tại trả về lỗi
-            const checkEx = await this.checkExistSubject(id);
+            const checkEx = await subjectModel.checkExistSubject(id);
             if(checkEx){
                 const query = db.collection('subjects').doc(id);
                 //xử lý bất đồng bộ kết quả sau khi thực hiện update
@@ -59,7 +55,7 @@ const subjectModel = {
             //có tồn tại hay không 
             //nếu tồn tại mới tiếp tục thực hiện delete
             //nếu không tồn tại trả về lỗi
-            const checkEx = await this.checkExistSubject(id);
+            const checkEx = await subjectModel.checkExistSubject(id);
             if(checkEx){
                 const query = db.collection("subjects").doc(id);
                 //Xử lý bất đồng bộ kết quả trả về sau khi xóa 
@@ -80,7 +76,7 @@ const subjectModel = {
             //sẽ xuất thông tin subject đó trả về phía client
             const result = await query.get();
             if(result.exists){
-                return {id, subjectInfors:result.data()};
+                return {id,...result.data()};
             }
             return {code:"Subject reading err", message:"Subject does not exist"}; 
         }catch(e){
@@ -94,6 +90,27 @@ const subjectModel = {
             return true;
         }
         return false;
+    },
+    async getStudentsInSubject(subjectId){
+        try{
+            const userModel = require('./userModel');
+            const listUser = await userModel.readUser(); //Lấy danh sách tất cả các user
+            const listUser_In_Subject = listUser.filter((user) => {    //Trả về mảng chứa danh sách sinh viên có tham gia môn học này
+                if(user.subjectIds && user.subjectIds.length > 0 && user.subjectIds.includes(subjectId)){    //Kiểm tra trong mảng id các môn học user đang tham gia có id môn học đang cần lấy danh sách sv hay không
+                    return user;
+                }
+            })
+            return listUser_In_Subject;
+        }catch(err){
+            return {code: "Subject error", msg: "An error occurred during processing"};
+        }
+    },
+    async createSubjectDeadline(nameDeadline,deadline){
+        try{
+            console.log(nameDeadline,deadline);
+        }catch(err){   
+            return {code: "Subject error", msg: "An error occurred during processing"};
+        }
     }
 }
 

@@ -1,4 +1,5 @@
 const userModel = require('../models/userModel');
+const enrollStudent = require('./enrollStudent ');
 
 const userController = {
     async readUser(req,res){
@@ -36,6 +37,18 @@ const userController = {
         }catch(e){
             res.json({code:err.code,message:err.details});
         }
+    },
+    async group_subject_Handler(req,res){
+        try{
+            const path = req.url;
+            let pathParts = path.split('/');
+            pathParts.shift();
+            const result = await enrollStudent.add_To_GroupOrSubject(pathParts);
+            res.json(result);
+        }catch (err){
+            res.json({code: err.code, message: err.details}); 
+        }
+
     }
 }
 

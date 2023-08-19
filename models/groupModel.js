@@ -70,6 +70,21 @@ const groupModel = {
             return true;
         }
         return false;
+    },
+    async getStudentsInGroup(groupId){
+        try{
+            const userModel = require('./userModel');
+            const listUser = await userModel.readUser(); //Lấy danh sách tất cả các user
+            const listUser_In_Group = listUser.filter((user) => {    //Trả về mảng chứa danh sách sinh viên có tham gia môn học này
+                if(user.groupIds && user.groupIds.length > 0 && user.groupIds.includes(groupId)){    //Kiểm tra trong mảng id các môn học user đang tham gia có id môn học đang cần lấy danh sách sv hay không
+                    return user;
+                }
+            })
+            return listUser_In_Group;
+        }catch(err){
+            console.log(err)
+            return {code: "Subject error", msg: "An error occurred during processing"};
+        }
     }
 }
 

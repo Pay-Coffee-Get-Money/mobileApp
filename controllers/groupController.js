@@ -45,6 +45,15 @@ const groupController = {
         }catch(err){
             res.json({code: err.code, message: err.details});
         }
+    },
+    async getStudentsInGroup(req,res){
+        try{
+            const groupId = req.params.groupId;     // lấy id group cần xem danh sách sinh viên
+            const result = await groupModel.getStudentsInGroup(groupId);
+            res.json(result);
+        }catch(err){
+            res.json({code: err.code, message: err.details});
+        }
     }
 }
 
