@@ -1,10 +1,10 @@
-const groupModel = require('../models/groupModel');
-const subjectModel = require('../models/subjectModel');
-const userModel = require('../models/userModel');
-
 const enrollStudent = {
-    async add_To_GroupOrSubject(pathParts){
-        try{         
+    async group_subject_topic_adding(pathParts){
+        try{     
+            const groupModel = require('./groupModel');
+            const subjectModel = require('./subjectModel');
+            const userModel = require('./userModel');
+
             const resultClassify = this.classify(pathParts);
             if(resultClassify.code == 4){           //Trả về lỗi nếu sai cú pháp url
                 return resultClassify;
@@ -14,7 +14,7 @@ const enrollStudent = {
             if(user.code){  //kiểm tra user có tồn tại hay không
                 return {code : 5, msg: "This userId is invalid"};
             }
-            // Lấy danh sách id của các subject/group user đã tham gia
+            // Lấy danh sách id của các subject/group/topic user đã tham gia
             const Ids = user[resultClassify.takeFieldFromUser];    
 
             const {subjectId} = await groupModel.getGroupById(resultClassify.objectId); // Lấy mã môn học của nhóm học sinh viên muốn tham gia
@@ -29,12 +29,12 @@ const enrollStudent = {
                 }
             }
             
-            // Xử lý trường hợp user chưa tham gia môn học hoặc group hay tạo group nào
+            // Xử lý trường hợp user chưa tham gia môn học / group hay tạo group / topic nào
             if(!Ids || Ids.length === 0){  
                 await userModel.updateUser(user.id, { [resultClassify.takeFieldFromUser]:[resultClassify.objectId] });
                 return {code : 0, msg: "success adding"};
             }
-            // Xử lý trường hợp user request tham gia subject/group đó lần 2 (Tránh bị trùng)
+            // Xử lý trường hợp user request tham gia/đăng ký subject/group/topic đó lần 2 (Tránh bị trùng)
             let foundDuplicate = false;
             Ids.forEach((item) => {
                 if(item === resultClassify.objectId) {
@@ -58,7 +58,13 @@ const enrollStudent = {
             if(foundDuplicate){
                 return {code : 1, msg: `This student is already a member of this ${resultClassify.type}`};
             }else if(foundDuplicateSubject){
-                return {code : 2, msg: "You cannot join 2 groups in the same subject"};
+                if(resultClassify.type == 'group'){
+                    return {code : 2, msg: "You cannot join 2 groups in the same subject"};
+                }else if(resultClassify.type == 'subject'){
+                    return {code : 2, msg: "This user has joined this subject"};
+                }else if(resultClassify.type == 'topic'){
+                    return {code : 2, msg: "This user has accept to sign this topic before"};
+                }
             }else{
                 // Thêm groupId/subjectId mới vào mảng groupIds/subjectIds của user
                 Ids.push(resultClassify.objectId);
@@ -66,6 +72,25 @@ const enrollStudent = {
                 return {code : 0, msg: "success adding"};
             }
         }catch(err){
+            return {code: err.code, message: err.details};
+        }
+    },
+    async group_subject_topic_deleting(pathParts){
+        try{
+            const userModel = require('./userModel');
+
+            const resultClassify = this.classify(pathParts);    //Phân loại subject/group/topic
+
+            //Lấy user cần xóa khỏi group/subject/topic
+            const user = await userModel.getUserById(resultClassify.userId);
+            //Thay đổi trường groupIds/groupIds/topicIds của user thành mảng mới đã loại groupId/subjectId/topicId
+            const ids = user[resultClassify.takeFieldFromUser].filter((item) => {
+                return item !== resultClassify.objectId;
+            })
+            //Update laị trường groupIds/subjectIds/topicIds của user
+            const result = await userModel.updateUser(resultClassify.userId, {[resultClassify.takeFieldFromUser] : ids});
+            return result;
+        }catch (err){
             return {code: err.code, message: err.details};
         }
     },
@@ -88,9 +113,19 @@ const enrollStudent = {
                     objectId: pathParts[3],                 //cụ thể là subjectId
                     takeFieldFromUser: "subjectIds"
                 }
+            case "topic":
+                return {
+                    type: "topic",
+                    userId: userId,
+                    objectId: pathParts[3],                 //cụ thể là topicId
+                    takeFieldFromUser: "topicIds"
+                }
             default:
                 return {code : 4, msg: "Format url is invalid, please try again"};
         }
+    },
+    async deleteRequest(){
+
     }
 }
 

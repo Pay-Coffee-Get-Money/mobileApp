@@ -1,5 +1,5 @@
 const userModel = require('../models/userModel');
-const enrollStudent = require('./enrollStudent ');
+const enrollStudent = require('../models/enrollStudent ');
 
 const userController = {
     async readUser(req,res){
@@ -38,12 +38,24 @@ const userController = {
             res.json({code:err.code,message:err.details});
         }
     },
-    async group_subject_Handler(req,res){
+    async group_subject_topic_adding(req,res){
         try{
             const path = req.url;
             let pathParts = path.split('/');
             pathParts.shift();
-            const result = await enrollStudent.add_To_GroupOrSubject(pathParts);
+            const result = await enrollStudent.group_subject_topic_adding(pathParts);
+            res.json(result);
+        }catch (err){
+            res.json({code: err.code, message: err.details}); 
+        }
+
+    },
+    async group_subject_topic_deleting(req,res){
+        try{
+            const path = req.url;
+            let pathParts = path.split('/');
+            pathParts.shift();
+            const result = await enrollStudent.group_subject_topic_deleting(pathParts);
             res.json(result);
         }catch (err){
             res.json({code: err.code, message: err.details}); 

@@ -12,6 +12,7 @@ const specializationManagament = require("./specializationManagament");
 const fileManagament = require("./fileManagament");
 const userManagament = require("./userManagament");
 const academicYearManagament = require("./academicYearManagament");
+const registrationRequiredManagament = require("./registrationRequiredManagament");
 
 module.exports = {authentication,
     termManagament,
@@ -23,5 +24,6 @@ module.exports = {authentication,
     specializationManagament,
     fileManagament,
     userManagament,
-    academicYearManagament
+    academicYearManagament,
+    registrationRequiredManagament
 };

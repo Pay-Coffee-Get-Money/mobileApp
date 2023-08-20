@@ -1,5 +1,6 @@
 const {db} = require('../config');
 const qrHandler = require('../src/qrCode/qrHandler');
+const enrollStudent = require("./enrollStudent ");
 
 const groupModel = {
     async createGroup(groupInfors){
@@ -11,6 +12,9 @@ const groupModel = {
                 return {code: groupQr.code, message: "There was an error while generating the group QR code, please try again"};
             }else{
                 const result = await docRef.set({...groupInfors, groupQr}); // Đặt dữ liệu cho tài liệu bao gồm mã QR
+                //Sau khi tạo dọc group có chứa accountid của tài khoản sinh viên tạo group
+                //Đồng thời thêm sinh viên vào group luôn
+                const rs = enrollStudent.add_To_GroupOrSubject(["group",groupInfors.account_id,docId]);
                 return {code: 0, message: "Successfully create group"};
             }
         }catch(err){
@@ -75,14 +79,23 @@ const groupModel = {
         try{
             const userModel = require('./userModel');
             const listUser = await userModel.readUser(); //Lấy danh sách tất cả các user
-            const listUser_In_Group = listUser.filter((user) => {    //Trả về mảng chứa danh sách sinh viên có tham gia môn học này
-                if(user.groupIds && user.groupIds.length > 0 && user.groupIds.includes(groupId)){    //Kiểm tra trong mảng id các môn học user đang tham gia có id môn học đang cần lấy danh sách sv hay không
+            const listUser_In_Group = listUser.filter((user) => {    //Trả về mảng chứa danh sách sinh viên có tham gia group này
+                if(user.groupIds && user.groupIds.length > 0 && user.groupIds.includes(groupId)){    //Kiểm tra trong mảng id các group user đang tham gia có id group đang cần lấy danh sách sv hay không
                     return user;
                 }
             })
             return listUser_In_Group;
         }catch(err){
-            console.log(err)
+            return {code: "Subject error", msg: "An error occurred during processing"};
+        }
+    },
+    async sendFindMembers(subjectId,groupId){
+        try{
+            const subjectModel = require('./subjectModel');
+            const listStudentInSubject = await subjectModel.getStudentsInSubject(subjectId);
+            const listStudentEmailInSubject = listStudentInSubject.map(user => user.email);
+            console.log(listStudentEmailInSubject)
+        }catch(err){
             return {code: "Subject error", msg: "An error occurred during processing"};
         }
     }

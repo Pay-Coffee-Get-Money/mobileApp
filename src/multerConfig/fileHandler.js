@@ -2,6 +2,7 @@ const xlsx = require('xlsx');
 const path = require('path');
 const subjectModel = require('../../models/subjectModel');
 const topicModel = require('../../models/topicModel');
+const enrollStudent = require('../../models/enrollStudent ');
 
 const fileHandler = {
     importExcelFile(file){
@@ -36,7 +37,14 @@ const fileHandler = {
             const method = rsTypeChecking.method;
             //Từ dữ liệu đã lấy được lần lượt tạo đối tượng tương ứng vào DB theo từng phần tử của mảng
             excelData.forEach(async (item) => {
-                const result = await model[method](item);
+                let result;
+                if(type == 'enrollStudent'){
+                    const infors = ["","subject",item.userId,item.subjectId];
+                    console.log(infors);
+                    result = await model[method](infors);
+                }else{
+                    result = await model[method](item);
+                }
                 if(result.code !== 0){
                     req.result = result;
                     next();
@@ -48,6 +56,11 @@ const fileHandler = {
     },
     async handle_export_files(req,res,next){
         const type = req.params.model;
+        //trường hợp lấy ds sinh viên trong môn học cụ thể
+        let subjectId = null;
+        if(req.params.subjectId){
+            subjectId = req.params.subjectId;
+        }
         const rsTypeChecking = fileHandler.checkType(type,'export');  //Kiểm tra loại model được gửi lên server để lấy được model và method tương ứng để xử dụng
         if(rsTypeChecking.code == "Type error"){                      //Trả về lỗi nếu loại model không có 
             req.result = rsTypeChecking;
@@ -57,28 +70,32 @@ const fileHandler = {
             const method = rsTypeChecking.method;
 
             // Dữ liệu bạn muốn viết vào tệp Excel
-            let data = await model[method]();
+            let data = await model[method](subjectId);
 
-            //loại trường ID ra khỏi item của mảng 
-            data = data.map((item,index)=>{
-                const {id, ...infors} = item;
-                return item = infors;
-            })        
+            if(data && data.length > 0){
+                // loại trường groupIds/subjectIds/topicIds/role ra khỏi item của mảng 
+                data = data.map((item,index)=>{
+                    const {groupIds, subjectIds, topicIds, role, ...infors} = item;
+                    return item = infors;
+                })        
 
-            // Tạo một workbook mới
-            const workbook = xlsx.utils.book_new();
-            
-            // Tạo một worksheet mới
-            const worksheet = xlsx.utils.json_to_sheet(data);
-            
-            // Thêm worksheet vào workbook
-            xlsx.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-            
-            // Ghi workbook vào tệp Excel
-            const fileExportPath = './src/fileExport/File_Export.xlsx'; // Đường dẫn và tên tệp Excel sẽ được viết
-            xlsx.writeFile(workbook, fileExportPath);
-            const filePath = path.join(path.join(__dirname, '../fileExport/File_Export.xlsx'));
-            req.result = filePath;
+                // Tạo một workbook mới
+                const workbook = xlsx.utils.book_new();
+                
+                // Tạo một worksheet mới
+                const worksheet = xlsx.utils.json_to_sheet(data);
+                
+                // Thêm worksheet vào workbook
+                xlsx.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+                
+                // Ghi workbook vào tệp Excel
+                const fileExportPath = './src/fileExport/File_Export.xlsx'; // Đường dẫn và tên tệp Excel sẽ được viết
+                xlsx.writeFile(workbook, fileExportPath);
+                const filePath = path.join(path.join(__dirname, '../fileExport/File_Export.xlsx'));
+                req.result = filePath;
+            }else{
+                req.result = {code: 2, message: 'No data is found or data is empty'};
+            }
             next();
         }
     },
@@ -93,6 +110,11 @@ const fileHandler = {
                 return {
                     model: topicModel,
                     method: operation !== "import" ? 'readTopic' : 'createTopic'
+                }
+            case 'enrollStudent'.toLowerCase():
+                return {
+                    model: operation !== "import" ? subjectModel : enrollStudent,
+                    method: operation !== "import" ? 'getStudentsInSubject' : 'group_subject_topic_adding'
                 }
             default:
                 return {code: "Type error", message: "This type is not available"};

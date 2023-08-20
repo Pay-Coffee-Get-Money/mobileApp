@@ -45,6 +45,15 @@ const topicController = {
         }catch(err){
             res.json({code:err.code,message:err.details});
         }
+    },
+    async getStudentsInTopic(req,res){
+        try{
+            const topicId = req.params.topicId;     // lấy id topic cần xem danh sách sinh viên
+            const result = await topicModel.getStudentsInTopic(topicId);
+            res.json(result);
+        }catch(err){
+            res.json({code: "Subject error", msg: "An error occurred during processing"});
+        }
     }
 }
 

@@ -4,7 +4,7 @@ const groupController = {
     async createGroup(req,res){
         try{
             const groupInfors = req.body;
-            const result = await groupModel.createGroup(groupInfors);
+            const result = await groupModel.createGroup(groupInfors);       
             res.json(result);
         }catch(err){
             res.json({code: err.code, message: err.details});
@@ -54,6 +54,12 @@ const groupController = {
         }catch(err){
             res.json({code: err.code, message: err.details});
         }
+    },
+    async sendFindMembers(req,res){
+        const subjectId = req.params.subjectId;
+        const groupId = req.params.groupId;
+        const result = await groupModel.sendFindMembers(subjectId,groupId);
+        res.json(result);
     }
 }
 
