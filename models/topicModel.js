@@ -74,7 +74,45 @@ const topicModel = {
             })
             return listUser_In_Topic;
         }catch(err){
-            return {code: "Subject error", msg: "An error occurred during processing"};
+            return {code: "Topics error", msg: "An error occurred during processing"};
+        }
+    },
+    async getStatistics(subjectId){
+        try{
+            //Lấy các đề tài trong môn học
+            const topicsRef = db.collection("topics");
+            const topicsQuery = topicsRef.where("subjectId", "==", subjectId);
+            const topicsSnapshot = await topicsQuery.get();
+        
+            let topicsData = [];
+            topicsSnapshot.forEach(topicDoc => {
+                const topic = {id: topicDoc.id, ...topicDoc.data()};
+                topicsData.push(topic);
+            });
+        
+            //Lấy số lượng sinh viên đăng ký thành công của từng đề tài sau đó thêm vào từng item đề tài
+            topicsData = await Promise.all(topicsData.map(async (topic, index) => {
+                const studentJoinThisTopic = await this.getStudentsInTopic(topic.id);
+                return {...topic, number_of_student_registrations: studentJoinThisTopic.length};
+            }))
+
+            //Truyền dữ liệu tạo chart
+            const labels = [];
+            const dataNumbers = []; 
+            topicsData.forEach((topic, index) => {
+                labels.push(topic.name);
+                dataNumbers.push(topic.number_of_student_registrations);
+            })
+            //lấy số sinh viên trong môn học
+            const subjectModel = require('./subjectModel');
+            const stdInSubject = await subjectModel.getStudentsInSubject(subjectId);
+            const number_of_student_in_subject = stdInSubject.length;
+        
+            const chartHandler = require('../src/chart/chartHandler');
+            const pathChart = await chartHandler.createChart(labels,dataNumbers,number_of_student_in_subject);
+            return pathChart;
+        }catch(err){
+            return {code: "Topics error", msg: "An error occurred during processing"};
         }
     }
 }

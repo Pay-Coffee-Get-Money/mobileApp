@@ -33,7 +33,6 @@ const groupModel = {
             const subjectModel = require('./subjectModel');
             const subjectInfors = await subjectModel.getSubjectById(subjectId);
             data.push({id: item.id, ...item.data(), subjectInfors});
-            console.log(data);
         }
         
         return data;
