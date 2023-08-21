@@ -80,7 +80,7 @@ const termModel = {
             //sẽ xuất thông tin term đó trả về phía client
             const result = await query.get();
             if(result.exists){
-                return {id, termInfors:result.data()};
+                return {id, ...result.data()};
             }
             return {code:"Term reading err", message:"Term does not exist"}; 
         }catch(e){

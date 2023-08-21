@@ -10,10 +10,7 @@ const userModel = {
             role : data.role,
             active : data.active
         })
-        .then((user)=>{
-            //có thể bỏ
-            console.log(user);
-        })
+        .then((user)=>{})
         .catch((error) => {
             res.json({code:err.code,msg:err.message});
         });
@@ -80,7 +77,7 @@ const userModel = {
     getUserInforByEmail(email){                         //Tìm UserInf bằng email sau đó trả về 1 promise
         const query = db.collection('users').where('email', '==', email);
         return query.get();
-    }
+    },
 }
 
 module.exports = userModel;

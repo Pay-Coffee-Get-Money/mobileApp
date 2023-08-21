@@ -62,6 +62,20 @@ const topicModel = {
             return true;
         }
         return false;
+    },
+    async getStudentsInTopic(topicId){
+        try{
+            const userModel = require('./userModel');
+            const listUser = await userModel.readUser(); //Lấy danh sách tất cả các user
+            const listUser_In_Topic = listUser.filter((user) => {    //Trả về mảng chứa danh sách sinh viên có tham gia topic này
+                if(user.topicIds && user.topicIds.length > 0 && user.topicIds.includes(topicId)){    //Kiểm tra trong mảng id các topics user đang tham gia có id topic đang cần lấy danh sách sv hay không
+                    return user;
+                }
+            })
+            return listUser_In_Topic;
+        }catch(err){
+            return {code: "Subject error", msg: "An error occurred during processing"};
+        }
     }
 }
 

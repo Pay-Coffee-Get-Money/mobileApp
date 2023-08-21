@@ -1,4 +1,5 @@
 const userModel = require('../models/userModel');
+const enrollStudent = require('../models/enrollStudent ');
 
 const userController = {
     async readUser(req,res){
@@ -36,6 +37,30 @@ const userController = {
         }catch(e){
             res.json({code:err.code,message:err.details});
         }
+    },
+    async group_subject_topic_adding(req,res){
+        try{
+            const path = req.url;
+            let pathParts = path.split('/');
+            pathParts.shift();
+            const result = await enrollStudent.group_subject_topic_adding(pathParts);
+            res.json(result);
+        }catch (err){
+            res.json({code: err.code, message: err.details}); 
+        }
+
+    },
+    async group_subject_topic_deleting(req,res){
+        try{
+            const path = req.url;
+            let pathParts = path.split('/');
+            pathParts.shift();
+            const result = await enrollStudent.group_subject_topic_deleting(pathParts);
+            res.json(result);
+        }catch (err){
+            res.json({code: err.code, message: err.details}); 
+        }
+
     }
 }
 
