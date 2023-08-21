@@ -62,7 +62,7 @@ const groupModel = {
             //Trả thêm thông tin muôn học của group đó
             const subjectId = result.data().subjectId;
             const subjectModel = require('./subjectModel');
-            const subjectInfors = subjectModel.getSubjectById(subjectId);
+            const subjectInfors = await subjectModel.getSubjectById(subjectId);
             if(result.data() != null && subjectInfors){
                 return {id: groupId, ...result.data(), subjectInfors}; 
             }
