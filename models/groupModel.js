@@ -14,7 +14,7 @@ const groupModel = {
                 const result = await docRef.set({...groupInfors, groupQr}); // Đặt dữ liệu cho tài liệu bao gồm mã QR
                 //Sau khi tạo dọc group có chứa accountid của tài khoản sinh viên tạo group
                 //Đồng thời thêm sinh viên vào group luôn
-                const rs = enrollStudent.add_To_GroupOrSubject(["group",groupInfors.account_id,docId]);
+                const rs = enrollStudent.group_subject_topic_adding(["group",groupInfors.account_id,docId]);
                 return {code: 0, message: "Successfully create group"};
             }
         }catch(err){
@@ -59,8 +59,12 @@ const groupModel = {
         try{
             const query = db.collection("groups").doc(groupId);
             const result = await query.get();
-            if(result.data() != null){
-                return {id: groupId, ...result.data()}; 
+            //Trả thêm thông tin muôn học của group đó
+            const subjectId = result.data().subjectId;
+            const subjectModel = require('./subjectModel');
+            const subjectInfors = subjectModel.getSubjectById(subjectId);
+            if(result.data() != null && subjectInfors){
+                return {id: groupId, ...result.data(), subjectInfors}; 
             }
             return {code: "Group reading error", message: "Group does not exist"}; 
         }catch(err){

@@ -4,12 +4,7 @@ const accountModel = require('./accountModel.js');
 const userModel = {
     createUser(data){
         //tạo thông tin user
-        db.collection('users').doc().set({
-            email : data.email,
-            username : data.username,
-            role : data.role,
-            active : data.active
-        })
+        db.collection('users').doc().set(data)
         .then((user)=>{})
         .catch((error) => {
             res.json({code:err.code,msg:err.message});
