@@ -11,8 +11,7 @@ const registrationRequiredModel = {
             }
             // Kiểm tra deadline trước khi tạo yêu cầu
             const isTimeOut = await this.checkTimeOut(type,id);
-            console.log(isTimeOut);
-            if(isTimeOut){         //nếu đã qua deadline thì sẽ trả về lỗi không được đăng ký rồi thông báo
+            if(!isTimeOut){         //nếu đã qua deadline thì sẽ trả về lỗi không được đăng ký rồi thông báo
                 return {code: 3, message: "Can't register because the time has passed"};
             }
             //tạo doc mới cho collection registration_requires 
@@ -48,18 +47,9 @@ const registrationRequiredModel = {
                     deadline = item.data().deadline;
                 }
             })
-
-            const moment = require('moment');
-            const deadlineMoment = moment(deadline, "MMMM DD, YYYY HH:mm:ss UTCZ");
-
-            let deadlineTimestamp;
-            if (deadlineMoment.isValid()) {
-                deadlineTimestamp = deadlineMoment.valueOf(); // Chuyển đổi sang timestamp (miliseconds)
-            }
-            // Lấy thời gian hiện tại và chuyển đổi sang timestamp
-            const currentTimestamp = moment().valueOf();
-            //So sánh thời gian đăng ký với dealine
-            if(deadlineTimestamp < currentTimestamp || deadlineTimestamp){
+            const receivedDatetime = new Date(deadline);
+            const currentDatetime = new Date();
+            if(receivedDatetime < currentDatetime && receivedDatetime){
                 return false;
             }else{
                 return true;
@@ -113,19 +103,22 @@ const registrationRequiredModel = {
                 return {
                     type,
                     groupId : id,
-                    userId
+                    userId,
+                    name: 'Yêu cầu đăng ký nhóm'
                 }
             case "subject":
                 return {
                     type,
                     subjectId : id,
-                    userId
+                    userId,
+                    name: 'Yêu cầu đăng ký môn học'
                 }
             case "topic":
                 return {
                     type,
                     topicId : id,
-                    userId
+                    userId,
+                    name: 'Yêu cầu đăng ký đề tài'
                 }
             default:    
                 return {code: 1, msg: "Invalid type"};
@@ -133,7 +126,7 @@ const registrationRequiredModel = {
     },
     async requireHandle(id,isApproved){
         try{
-            if(isApproved == false){                                        //Nếu yêu cầu bị từ chối sẽ xóa yêu cầu đó đi sau đó gửi thông báo
+            if(isApproved == 'false' || isApproved == false){                                        //Nếu yêu cầu bị từ chối sẽ xóa yêu cầu đó đi sau đó gửi thông báo
                 const rsDelete = await this.deleteRequired(id);
                 return rsDelete;
             }
@@ -149,6 +142,7 @@ const registrationRequiredModel = {
                 //Sau khi comfirm yêu cầu thêm sv vào subject/topic
                 //Sẽ xóa yêu cầu đó đi sau khi thêm thành công
                 if(result.code == 0){
+                    console.log(result.code)
                     await this.deleteRequired(id);
                 }
                 return result;
