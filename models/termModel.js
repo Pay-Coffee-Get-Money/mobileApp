@@ -6,7 +6,6 @@ const termModel = {
             //Xử lý bất đồng bộ sau khi thêm doc vào collection database
             //Nếu thêm thành công thì trả về code 0
             //Thât bại về thông tin lỗi
-        console.log(termInfors)
             const result = await db.collection('terms').doc().set({
                 name: termInfors['name'],
                 start_day: termInfors['start_day'] == "" ? "" : new Date(termInfors['start_day']),

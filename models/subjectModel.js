@@ -7,7 +7,8 @@ const subjectModel = {
             //Xử lý bất đồng bộ sau khi thêm doc vào collection database
             //Nếu thêm thành công thì trả về code 0
             //Thât bại về thông tin lỗi
-            const result = await db.collection('subjects').doc().set(subjectInfors)
+            const ref = await db.collection('subjects').doc();
+            const result = await ref.set(subjectInfors);
             return {code:0, message:`Successfully create subject: ${subjectInfors['name']}`};
         }catch(err){
             return {code:err.code, message:err.message};
@@ -102,13 +103,6 @@ const subjectModel = {
             })
             return listUser_In_Subject;
         }catch(err){
-            return {code: "Subject error", msg: "An error occurred during processing"};
-        }
-    },
-    async createSubjectDeadline(nameDeadline,deadline){
-        try{
-            console.log(nameDeadline,deadline);
-        }catch(err){   
             return {code: "Subject error", msg: "An error occurred during processing"};
         }
     }

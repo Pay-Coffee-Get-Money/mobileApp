@@ -54,6 +54,11 @@ const topicController = {
         }catch(err){
             res.json({code: "Subject error", msg: "An error occurred during processing"});
         }
+    },
+    async getStatistics(req,res){
+        const subjectId = req.params.subjectId;
+        const result = await topicModel.getStatistics(subjectId);
+        res.sendFile(result);
     }
 }
 

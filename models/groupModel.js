@@ -33,7 +33,6 @@ const groupModel = {
             const subjectModel = require('./subjectModel');
             const subjectInfors = await subjectModel.getSubjectById(subjectId);
             data.push({id: item.id, ...item.data(), subjectInfors});
-            console.log(data);
         }
         
         return data;
@@ -105,7 +104,6 @@ const groupModel = {
             const subjectModel = require('./subjectModel');
             const listStudentInSubject = await subjectModel.getStudentsInSubject(subjectId);
             const listStudentEmailInSubject = listStudentInSubject.map(user => user.email);
-            console.log(listStudentEmailInSubject)
         }catch(err){
             return {code: "Subject error", msg: "An error occurred during processing"};
         }

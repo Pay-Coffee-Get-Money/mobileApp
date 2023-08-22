@@ -71,7 +71,16 @@ const registrationRequiredModel = {
             return {code: err.code, message: err.details};
         }
     },
-    async deleteRequired(id){
+    async deleteRequired(newInfors){
+        try{
+            const query = db.collection("registration_requires").doc(id);
+            const result = await query.update(newInfors);
+            return {code: 0, message: "Successfully update requirement"}; 
+        }catch(err){
+            return {code: err.code, message: err.details};
+        }
+    },
+    async updateRequired(id){
         try{
             const query = db.collection("registration_requires").doc(id);
             const result = await query.delete();
@@ -104,21 +113,24 @@ const registrationRequiredModel = {
                     type,
                     groupId : id,
                     userId,
-                    name: 'Yêu cầu đăng ký nhóm'
+                    name: 'Yêu cầu đăng ký nhóm',
+                    status: null,
                 }
             case "subject":
                 return {
                     type,
                     subjectId : id,
                     userId,
-                    name: 'Yêu cầu đăng ký môn học'
+                    name: 'Yêu cầu đăng ký môn học',
+                    status: null,
                 }
             case "topic":
                 return {
                     type,
                     topicId : id,
                     userId,
-                    name: 'Yêu cầu đăng ký đề tài'
+                    name: 'Yêu cầu đăng ký đề tài',
+                    status: null,
                 }
             default:    
                 return {code: 1, msg: "Invalid type"};
@@ -126,24 +138,24 @@ const registrationRequiredModel = {
     },
     async requireHandle(id,isApproved){
         try{
-            if(isApproved == 'false' || isApproved == false){                                        //Nếu yêu cầu bị từ chối sẽ xóa yêu cầu đó đi sau đó gửi thông báo
-                const rsDelete = await this.deleteRequired(id);
-                return rsDelete;
+            if(isApproved == 'false' || isApproved == false){                                        //Nếu yêu cầu bị từ chối sẽ update lại status của request thành false sau đó gửi thông báo
+                const rsUpdate = await this.updateRequired({status: false});
+                return rsUpdate;
             }
 
             const request = await this.getRequiredById(id);
             if(request.type == 'group'){                                    //Nếu type của yêu cầu là group thì update trường required_status == true
                 const groupModel = require('./groupModel');
                 const result = await groupModel.updateGroup(id,{required_status : true});
+                const rsUpdate = await this.updateRequired({status: true});
                 return result;
             }else if(request.type == 'subject' || request.type == 'topic'){     //Nếu type == subject/topic thì thêm sinh viên đã gửi yêu cầu vào subject/topic
                 const enrollStudent = require('./enrollStudent ');
                 const result = await enrollStudent.group_subject_topic_adding(["",request.type,request.userId,request.subjectId ? request.subjectId : request.topicId]);//Mảng được đưa vào với định dạng ["",type,userId]
                 //Sau khi comfirm yêu cầu thêm sv vào subject/topic
-                //Sẽ xóa yêu cầu đó đi sau khi thêm thành công
+                //Sẽ update lại status của request thành false sau khi thêm thành công
                 if(result.code == 0){
-                    console.log(result.code)
-                    await this.deleteRequired(id);
+                    await this.updateRequired({status: true});
                 }
                 return result;
             }else{
