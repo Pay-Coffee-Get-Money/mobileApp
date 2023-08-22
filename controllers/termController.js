@@ -3,6 +3,7 @@ const termModel = require('../models/termModel');
 const termController = {
     async createTerm (req,res){
         const termInfors = req.body;
+        console.log(termInfors)
         const result = await termModel.createTerm(termInfors);
         res.json(result);
     },

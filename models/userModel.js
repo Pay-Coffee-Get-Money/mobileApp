@@ -73,6 +73,24 @@ const userModel = {
         const query = db.collection('users').where('email', '==', email);
         return query.get();
     },
+    async addListUserToSubject(data) {
+        try {
+            const subjectId = data.subjectId;
+            const list_userId = data.list_userId;
+    
+            await Promise.all(list_userId.map(async (userId) => {
+                const user = await userModel.getUserById(userId);
+    
+                let newSubjectIds = user.subjectIds ? [...user.subjectIds, subjectId] : [subjectId];
+    
+                await userModel.updateUser(userId, { subjectIds: newSubjectIds });
+            }));
+    
+            return { code: 0, message: "Successfully adding Users" };
+        } catch (err) {
+            return { code: err.code, message: err.details };
+        }
+    }    
 }
 
 module.exports = userModel;
