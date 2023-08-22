@@ -14,23 +14,45 @@ const subjectModel = {
             return {code:err.code, message:err.message};
         }
     },
-    async readSubject(){
-        try{
-            //Xử lý bất đồng bộ để lấy kết quả trả về từ database
+    async readSubject() {
+        try {
             const query = db.collection('subjects');
             const result = await query.get();
+            const termPromises = []; // Mảng chứa các promise
             const data = [];
-            //đưa các dữ liệu subjects vào mảng mới rồi trả về mảng sau khi thêm
+        
             result.forEach((item) => {
+                const subjectInfors = item.data();
+                
+                // Lấy thông tin học kỳ
+                if (subjectInfors.termId) {
+                    const termModel = require('./termModel.js');
+                    const termPromise = termModel.getTermById(subjectInfors.termId);
+                    termPromises.push(termPromise);
+                }
+        
                 const idSubject = item.id;
-                const {...subjectInfors} = item.data();
-                data.push({id:idSubject, ...subjectInfors});
+                data.push({ id: idSubject, ...subjectInfors });
             });
+        
+            // Chờ tất cả các promise hoàn thành
+            const termResults = await Promise.all(termPromises);
+        
+            // Gán kết quả của promise vào mảng data
+            termResults.forEach((term, index) => {
+                if (term) {
+                    data[index].term = term;
+                } else {
+                    data[index].term = {};
+                }
+            });
+        
             return data;
-        }catch(err){
-            return {code:"Subject reading err", message:"An error occurred during the read process"};
+        } catch (err) {
+            console.log(err);
+            return { code: "Subject reading err", message: "An error occurred during the read process" };
         }        
-    },
+    },    
     async updateSubject(id,newSubjectInfors){
         try{
             //Dùng hàm kiểm tra môn học với id môn học được gửi lên từ phía client 

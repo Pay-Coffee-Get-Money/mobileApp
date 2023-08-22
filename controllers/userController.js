@@ -61,6 +61,11 @@ const userController = {
             res.json({code: err.code, message: err.details}); 
         }
 
+    },
+    async addListUserToSubject(req,res){
+        const data = req.body;
+        const result = await userModel.addListUserToSubject(data);
+        res.json(result);
     }
 }
 

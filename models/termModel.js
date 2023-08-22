@@ -7,9 +7,9 @@ const termModel = {
             //Nếu thêm thành công thì trả về code 0
             //Thât bại về thông tin lỗi
             const result = await db.collection('terms').doc().set({
-                name: termInfors['name'],
                 start_day: termInfors['start_day'] == "" ? "" : new Date(termInfors['start_day']),
-                end_day: termInfors['start_day'] == "" ? "" : new Date(termInfors['end_day']) 
+                end_day: termInfors['start_day'] == "" ? "" : new Date(termInfors['end_day']),
+                ...termInfors
             })
             return {code:0, message:`successfully create term: ${termInfors['name']}`};
         }catch(err){
@@ -23,11 +23,31 @@ const termModel = {
             const result = await query.get();
             const data = [];
             //đưa các dữ liệu terms vào mảng mới rồi trả về mảng sau khi thêm
+            const arrPromise = [];
             result.forEach((item) => {
                 const idTerm = item.id;
                 const termInfors = item.data();
                 data.push({id:idTerm, termInfors});
+                //Lấy academic_year
+                const academicYearModel = require('./academicYearModel.js');
+                const academic_year_id = item.data()['academic_year_id'];
+                const academicYear = academicYearModel.getAcademicYearById(academic_year_id);
+                console.log(termInfors)
+                arrPromise.push(academicYear)
             });
+
+            // Chờ tất cả các promise hoàn thành
+            const Results = await Promise.all(arrPromise);
+
+            // Gán kết quả của promise vào mảng data
+            Results.forEach((item, index) => {
+                if (item) {
+                    data[index].academic_year = item;
+                } else {
+                    data[index].academic_year = {};
+                }
+            });
+
             return data;
         }catch(err){
             return {code:"Term reading err", message:"An error occurred during the read process"};
