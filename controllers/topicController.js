@@ -58,7 +58,6 @@ const topicController = {
     async getStatistics(req,res){
         const subjectId = req.params.subjectId;
         const result = await topicModel.getStatistics(subjectId);
-        console.log(result);
         res.sendFile(result);
     }
 }

@@ -6,7 +6,7 @@ const serviceAccount = require('./src/serviceAccountKey/serviceAccountKey.json')
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  // Thêm các thông tin cấu hình khác của bạn
+  databaseURL: 'https://mobileapp-a2ed4-default-rtdb.firebaseio.com/', 
 });
 
 
