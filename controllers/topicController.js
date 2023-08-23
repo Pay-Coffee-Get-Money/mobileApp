@@ -59,6 +59,38 @@ const topicController = {
         const subjectId = req.params.subjectId;
         const result = await topicModel.getStatistics(subjectId);
         res.sendFile(result);
+    },
+    async submitTopicFile(req,res){
+        //Lấy tên file đã nộp
+        const fileName = req.file.originalname;
+        const partsFileName = fileName.split(/[._]/);
+        const subjectId = req.subjectId;
+        const userId = partsFileName[0];
+        const topicId = partsFileName[1];
+        const result = await topicModel.submitTopicFile(userId,topicId,subjectId,fileName);
+        res.json(result);
+    },
+    async readTopicFilesSubmit(req,res){
+        const subjectId = req.params.subjectId;
+        const result = await topicModel.readTopicFilesSubmit(subjectId);
+        res.json(result);
+    },
+    async downloadFilesSubmit(req, res) {
+        const idFileSubmit = req.params.idFileSubmit;
+        const filePath = await topicModel.downloadFilesSubmit(idFileSubmit);
+        
+        if (typeof filePath === 'string') {
+            res.sendFile(filePath);
+        } else {
+            res.json(filePath);
+        }
+    },
+    async markFilesSubmit(req,res){
+        const mark = req.params.mark;
+        const idFileSubmit = req.params.idFileSubmit;
+        const result = await topicModel.markFilesSubmit(idFileSubmit,mark);
+        res.json(result);
+
     }
 }
 

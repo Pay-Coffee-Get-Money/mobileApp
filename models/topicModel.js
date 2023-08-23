@@ -114,6 +114,74 @@ const topicModel = {
         }catch(err){
             return {code: "Topics error", msg: "An error occurred during processing"};
         }
+    },
+    async submitTopicFile(userId,topicId,subjectId,fileName){
+        try{
+            const result = await db.collection("submit_files").doc().set({
+                userId,
+                topicId,
+                subjectId,
+                file: fileName
+            })
+            return {code:0,message:"Successfully submit file"};
+        }catch(err){
+            return {code: "Topics error", msg: "An error occurred during processing "+err};
+        }
+    },
+    async readTopicFilesSubmit(subjectId) {
+        try {
+            const query = db.collection("submit_files");
+            const result = await query.get();
+            const data = [];
+            const arrPromise = [];
+            
+            result.forEach(async (item) => {
+                if (item.data().subjectId == subjectId) {
+                    data.push({ id: item.id, ...item.data() });
+
+                    const topicPromise = topicModel.getTopicById(item.data().topicId);
+                    arrPromise.push(topicPromise);
+                }
+            });
+    
+            const topicResults = await Promise.all(arrPromise); // Lưu kết quả của Promise.all
+            data.forEach((item, index) => {
+                if (topicResults[index]) {
+                    const topicData = topicResults[index];
+                    item.topic = topicData;
+                }
+            });
+    
+            return data;
+        } catch (err) {
+            return { code: err.code, message: err.details };
+        }
+    },
+    async downloadFilesSubmit(idFileSubmit) {
+        try {
+            const query = db.collection("submit_files").doc(idFileSubmit);
+            const result = await query.get();
+            
+            if (result.data() != null) {
+                // Lấy path đến file đó
+                const path = require('path');
+                const filePath = path.join(__dirname, `../src/fileUploads/${result.data().file}`);
+                return filePath;
+            } else {
+                return { code: 1, message: 'File not found' };
+            }
+        } catch (err) {
+            return { code: err.code, message: err.details };
+        }
+    },
+    async markFilesSubmit(idFileSubmit,mark){
+        try{
+            const query = db.collection("submit_files").doc(idFileSubmit);
+            const result = await query.update({mark});
+            return {code:0,message:"Successfully mark for this"}; 
+        }catch(err){
+            return {code:err.code,message:err.details};
+        }
     }
 }
 
