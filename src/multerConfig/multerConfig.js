@@ -13,12 +13,16 @@ const storage = multer.diskStorage({
 
 // Kiểm tra loại tệp trước khi tải lên
 const fileFilter = (req, file, cb) => {
-    const filetypes = /xlsx|xls|xlsb|xlsm/; // Danh sách các kiểu MIME của tệp Excel
+    const subjectId = req.params.subjectId;
+    if(subjectId){
+      req.subjectId = subjectId;
+    }
+    const filetypes = /xlsx|xls|xlsb|xlsm|rar|rar5|zip/; // Danh sách các kiểu MIME của tệp Excel
     const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
     if (extname) {
       return cb(null, true); // Cho phép tải lên
     } else {
-      cb(JSON.stringify({code: "Error uploading", message: "'Only .xlsx, .xls, .xlsb, .xlsm files are accepted"}), false); // Từ chối tải lên
+      cb(JSON.stringify({code: "Error uploading", message: "'Only .xlsx, .xls, .xlsb, .xlsm, .rar, .rar5, .zip files are accepted"}), false); // Từ chối tải lên
     }
 };
   
