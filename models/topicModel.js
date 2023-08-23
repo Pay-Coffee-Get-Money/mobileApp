@@ -3,7 +3,13 @@ const {db} = require('../config');
 const topicModel = {
     async createTopic(topicInfors){
         try{
-            const result = await db.collection("topics").doc().set(topicInfors)
+            const ref = await db.collection("topics").doc();
+            const result = await ref.set(topicInfors);
+
+            //Đồng thời tạo tiến trình dự án của đề tài đã đăng ký
+            const processModel = require('./processModel');
+            const process = await processModel.createProcess(ref.id,topicInfors);
+            console.log(process)
             return {code:0,message:"Successfully create topic"};
         }catch(err){
             return {code:err.code,message:err.details};

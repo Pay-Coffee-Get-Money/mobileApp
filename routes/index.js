@@ -15,6 +15,7 @@ const academicYearManagament = require("./academicYearManagament");
 const registrationRequiredManagament = require("./registrationRequiredManagament");
 const notificationManagament = require("./notificationManagament");
 const chatManagament = require("./chatManagament");
+const processManagament = require("./processManagament");
 
 module.exports = {authentication,
     termManagament,
@@ -29,5 +30,6 @@ module.exports = {authentication,
     academicYearManagament,
     registrationRequiredManagament,
     notificationManagament,
-    chatManagament
+    chatManagament,
+    processManagament
 };
