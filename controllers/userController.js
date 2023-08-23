@@ -66,6 +66,21 @@ const userController = {
         const data = req.body;
         const result = await userModel.addListUserToSubject(data);
         res.json(result);
+    },
+    async getSubjects(req,res){
+        const userId = req.params.userId;
+        const result = await userModel.getSubjects(userId);
+        res.json(result);
+    },
+    async getTopics(req,res){
+        const userId = req.params.userId;
+        const result = await userModel.getTopics(userId);
+        res.json(result);
+    },
+    async getGroups(req,res){
+        const userId = req.params.userId;
+        const result = await userModel.getGroups(userId);
+        res.json(result);
     }
 }
 

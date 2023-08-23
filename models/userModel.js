@@ -90,7 +90,64 @@ const userModel = {
         } catch (err) {
             return { code: err.code, message: err.details };
         }
-    }    
+    },
+    async getSubjects(userId){
+        try{
+            const query = db.collection("users").doc(userId)
+            const result = await query.get();
+            const subjectIds = result.data().subjectIds;
+            const arrPromise = [];
+            subjectIds.forEach((subjectId)=>{
+                const subjectModel = require('./subjectModel.js');
+                const subject = subjectModel.getSubjectById(subjectId);
+                arrPromise.push(subject);
+            })
+
+            const subjectArr = await Promise.all(arrPromise);
+
+            return subjectArr; 
+        }catch(err){
+            return {code:err.code,message:err.details};
+        }
+    },
+    async getTopics(userId){
+        try{
+            const query = db.collection("users").doc(userId)
+            const result = await query.get();
+            const topicIds = result.data().topicIds;
+            const arrPromise = [];
+            topicIds.forEach((topicId)=>{
+                const topicModel = require('./topicModel.js');
+                const topic = topicModel.getTopicById(topicId);
+                arrPromise.push(topic);
+            })
+
+            const topicArr = await Promise.all(arrPromise);
+
+            return topicArr; 
+        }catch(err){
+            return {code:err.code,message:err.details};
+        }
+    },
+    async getGroups(userId){
+        try{
+            const query = db.collection("users").doc(userId)
+            const result = await query.get();
+            const groupIds = result.data().groupIds;
+            const arrPromise = [];
+            groupIds.forEach((groupId)=>{
+                const groupModel = require('./groupModel.js');
+                const group = groupModel.getGroupById(groupId);
+                arrPromise.push(group);
+            })
+
+            const groupArr = await Promise.all(arrPromise);
+
+            return groupArr; 
+        }catch(err){
+            return {code:err.code,message:err.details};
+        }
+    }
 }
 
 module.exports = userModel;

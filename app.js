@@ -14,7 +14,8 @@ const {authentication,
     academicYearManagament,
     registrationRequiredManagament,
     notificationManagament,
-    chatManagament
+    chatManagament,
+    processManagament
 } = require('./routes/index');
 
 const cors = require('cors');
@@ -46,6 +47,7 @@ app.use('/',academicYearManagament);
 app.use('/',registrationRequiredManagament);
 app.use('/',notificationManagament);
 app.use('/',chatManagament);
+app.use('/',processManagament);
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, ()=>{
