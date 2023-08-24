@@ -8,7 +8,7 @@ const chatModel = {
             // Tạo phòng chat cho subject vào Realtime Database
             const chatRoomItem = {
                 subjectId,
-                chat:[],
+                chat: ["empty_message"],
                 timestamp: admin.database.ServerValue.TIMESTAMP,
             };
             // Thêm dữ liệu vào Realtime Database và lấy tham chiếu
@@ -60,7 +60,11 @@ const chatModel = {
                     timestamp: admin.database.ServerValue.TIMESTAMP,
                 }
                 const newMessageIndex = Object.keys(chatRoom.chat).length;
-                chatRoom.chat[newMessageIndex] = newMessage; // Thêm tin nhắn mới vào mảng chat cũ
+                if(chatRoom.chat[0] == "empty_message"){
+                    chatRoom.chat[0] = newMessage; // Thêm tin nhắn mới
+                }else{
+                    chatRoom.chat[newMessageIndex] = newMessage; // Thêm tin nhắn mới vào mảng chat cũ
+                }
                 // Cập nhật lại mảng chat trong cơ sở dữ liệu
                 await chatRoomsRef.child(chatRoom.id).update({ chat: chatRoom.chat });
                 return {code: 0, msg: 'Message send successfully'};
@@ -68,6 +72,7 @@ const chatModel = {
                 return {code: 2, msg: 'Chat room not found'};  
             }
         }catch(err){
+            console.log(err)
             return {code: 1, msg: 'Send message error, '+err};
         }
     }

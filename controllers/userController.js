@@ -67,6 +67,11 @@ const userController = {
         const result = await userModel.addListUserToSubject(data);
         res.json(result);
     },
+    async addListUserToGroup(req,res){
+        const data = req.body;
+        const result = await userModel.addListUserToGroup(data);
+        res.json(result);
+    },
     async getSubjects(req,res){
         const userId = req.params.userId;
         const result = await userModel.getSubjects(userId);
