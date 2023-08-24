@@ -9,6 +9,9 @@ const subjectModel = {
             //Thât bại về thông tin lỗi
             const ref = await db.collection('subjects').doc();
             const result = await ref.set(subjectInfors);
+            //Tạo chatRoom cho môn học
+            const chatModel = require('./chatModel.js');
+            const chatRoom = await chatModel.createChatRoom(ref.id);
             return {code:0, message:`Successfully create subject: ${subjectInfors['name']}`};
         }catch(err){
             return {code:err.code, message:err.message};

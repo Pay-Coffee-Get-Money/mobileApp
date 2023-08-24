@@ -53,11 +53,13 @@ const authentication = {
                     } 
                     else {
                         let userInf;
+                        let userId;
                         snapshot.forEach((doc) => {
                             userInf = doc.data();
-                            //Đăng nhập thành công trả về thông tin Account join với User
+                            userId = doc.id;
                         });
-                        res.json({code:0,accountUser:{...rs,...userInf}});
+                        //Đăng nhập thành công trả về thông tin Account join với User
+                        res.json({code:0,accountUser:{accountInf: rs , userInf:{ userId : userId, ...userInf } }});
                     }
                 })
                 .catch((err)=>{

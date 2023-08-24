@@ -91,6 +91,24 @@ const userModel = {
             return { code: err.code, message: err.details };
         }
     },
+    async addListUserToGroup(data) {
+        try {
+            const groupId = data.groupId;
+            const list_userId = data.list_userId;
+    
+            await Promise.all(list_userId.map(async (userId) => {
+                const user = await userModel.getUserById(userId);
+    
+                let newGroupIds = user.groupIds ? [...user.groupIds, groupId] : [groupId];
+    
+                await userModel.updateUser(userId, { groupIds: newGroupIds });
+            }));
+    
+            return { code: 0, message: "Successfully adding Users" };
+        } catch (err) {
+            return { code: err.code, message: err.details };
+        }
+    },
     async getSubjects(userId){
         try{
             const query = db.collection("users").doc(userId)
