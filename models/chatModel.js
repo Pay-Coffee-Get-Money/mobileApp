@@ -36,11 +36,22 @@ const chatModel = {
                     chatRooms.id = childSnapshot.key;
                 }  
             });
+            let data = [];
             if (chatRooms) {
-                return chatRooms;
+                data = await Promise.all(chatRooms.chat.map(async (msg) => {
+                    const userId = msg.userId;
+                    const userModel = require('./userModel');
+
+                    const userInf = await userModel.getUserById(userId); // Await the getUserById function
+                    msg.userInf = userInf;
+
+                    return msg; // Return the modified message object
+                }));
+                return data;
             } else {
-                return {code: 2, msg: 'Chat room not found'};  
+                return { code: 2, msg: 'Chat room not found' };
             }
+
         }catch(err){
             return {code: 1, msg: 'Chat room getting error, '+err};
         }
