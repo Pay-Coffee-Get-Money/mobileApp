@@ -1,10 +1,7 @@
 const nodemailer = require('nodemailer');
 
-const sendMail = async (mail,data,type)=>{
-    let html = getHtmlByType(data,type);
-    if(html.code !== 0){
-        return html;
-    }
+const sendMail = async (data)=>{
+    let html = getHtmlByType(data);
     // Create a transporter using the default SMTP transport
     const transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -20,9 +17,9 @@ const sendMail = async (mail,data,type)=>{
     // Email content
     const mailOptions = {
         from: 'Notification<cuBeo2501@gmail.com>',
-        to: mail,
+        to: data.email,
         subject: 'NOTIFICATION',
-        html: html.htmls
+        html: html
     };
     
     // Send the email
@@ -34,27 +31,24 @@ const sendMail = async (mail,data,type)=>{
     }
 }
 
-const getHtmlByType = (data,type) =>{
-    switch(type){
-        case 1:
-            if(!data.groupQr && !data.subjectName){
-                return {code: "Error", msg: "Some fileds data is invalid"};
-            }else{
-                return {
-                    code: 0,
-                    htmls: `
-                        <div style='width: 500px;background: white;border: 1px solid;box-shadow: 1px 1px 2px; padding: 10px 20px;text-align: center;'>
-                            <h1>Lời mời tham gia nhóm trong lớp ${data.subjectName}</h1>
-                            <img src="${data.groupQr}" alt="QRImg" />
-                        </div>
-                    `
-                };
-            } 
-        case 2:
-        case 3:
-        default:
-            return {code: "Type error", msg: "Type is invalid"};
-    }
+const getHtmlByType = (data) =>{
+    return `
+        <div>
+            <h1 style = 'color : red'>THÔNG BÁO THỜI HẠN NỘP ĐỀ TÀI MÔN ${data.subjectName.toUpperCase()}</h1>
+            <p>Hạn cứng : <b style='color : red'>${formatDateToDDMMYYYY(data.deadline_topic)}</b></p>
+            <p>Số ngày còn lại : <b style='color : red'>${(data.remaining_days)}</b></p>
+        </div>
+    `
+}
+
+function formatDateToDDMMYYYY(isoDateString) {
+    const date = new Date(isoDateString);
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Tháng trong JavaScript bắt đầu từ 0 (0 - 11)
+    const year = date.getFullYear();
+    
+    const formattedDate = `${day}/${month}/${year}`;
+    return formattedDate;
 }
 
 module.exports = sendMail;
