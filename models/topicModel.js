@@ -20,9 +20,15 @@ const topicModel = {
         const query = db.collection("topics");
         const result = await query.get();
         const data = [];
-        result.forEach((item) => {
-            data.push({id: item.id,...item.data()});
-        })
+
+        for (const item of result.docs) {
+            //Trả thêm thông tin muôn học của topic đó
+            const subjectId = item.data().subjectId;
+            const subjectModel = require('./subjectModel');
+            const subjectInfors = await subjectModel.getSubjectById(subjectId);
+            data.push({id: item.id, ...item.data(), subjectInfors});
+        }
+
         return data;
       }catch(err){
         return {code:err.code,message:err.details}
