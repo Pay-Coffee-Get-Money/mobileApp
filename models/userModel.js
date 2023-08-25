@@ -4,7 +4,8 @@ const accountModel = require('./accountModel.js');
 const userModel = {
     createUser(data){
         //tạo thông tin user
-        db.collection('users').doc().set(data)
+        const { password , ...dataHandled} = data;
+        db.collection('users').doc().set(dataHandled)
         .then((user)=>{})
         .catch((error) => {
             res.json({code:err.code,msg:err.message});
@@ -16,7 +17,8 @@ const userModel = {
             const result = await query.get();
             const data = [];
             result.forEach((item) => {
-                data.push({id: item.id,...item.data()});
+                const { password , ...dataHandled} = item.data();
+                data.push({id: item.id,...dataHandled});
             })
             return data;
         }catch(err){
