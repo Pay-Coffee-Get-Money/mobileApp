@@ -1,5 +1,5 @@
-const {firebase,auth,admin} = require('../config.js');
-
+const {firebase,auth,admin, jwtSecrectKey} = require('../config.js');
+const jwt = require('jsonwebtoken');
 const accountModel = require('../models/accountModel.js');
 const userModel = require('../models/userModel.js');
 
@@ -59,7 +59,12 @@ const authentication = {
                             userId = doc.id;
                         });
                         //Đăng nhập thành công trả về thông tin Account join với User
-                        res.json({code:0,accountUser:{accountInf: rs , userInf:{ userId : userId, ...userInf } }});
+                        let userData = {
+                            "userId": userId,
+                            "role": userInf.role
+                        }
+                        let token = jwt.sign(userData, jwtSecrectKey, { expiresIn: '1h' });
+                        res.json({code:0,accountUser:{accountInf: rs , userInf:{ userId : userId, ...userInf }, token: token }});
                     }
                 })
                 .catch((err)=>{

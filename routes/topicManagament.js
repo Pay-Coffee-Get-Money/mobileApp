@@ -2,12 +2,13 @@ const express = require('express');
 const route = express.Router();
 const topicController = require('../controllers/topicController');
 const upload = require('../src/multerConfig/multerConfig');
+const authorize = require('../middlewares/authorization');
 
-route.post('/topic',topicController.createTopic);  //Phải có trường name(string),subjectId(string)
+route.post('/topic', authorize(['lecturer']), topicController.createTopic);  //Phải có trường name(string),subjectId(string)
 route.get('/topic',topicController.readTopic);
 route.get('/topic/:id',topicController.getTopicById);
-route.put('/topic/:id',topicController.updateTopic);
-route.delete('/topic/:id',topicController.deleteTopic);
+route.put('/topic/:id', authorize(['lecturer']), topicController.updateTopic);
+route.delete('/topic/:id', authorize(['lecturer']), topicController.deleteTopic);
 route.get('/topic/students/:topicId',topicController.getStudentsInTopic);
 route.get('/topic/statistics/:subjectId',topicController.getStatistics);  //Tạo biểu đồ thống kê tình hình đăng ký đề tài của 1 môn học
 
