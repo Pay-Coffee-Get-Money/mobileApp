@@ -24,4 +24,6 @@ const app = firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = admin.firestore();
 
-module.exports = {firebase,auth,admin,db};
+const jwtSecrectKey = 'PayCoffeeGetMoney'; 
+
+module.exports = {firebase,auth,admin,db, jwtSecrectKey};

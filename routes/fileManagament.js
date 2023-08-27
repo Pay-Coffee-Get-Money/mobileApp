@@ -3,8 +3,10 @@ const route = express.Router();
 const fileController = require('../controllers/fileController');
 const upload = require('../src/multerConfig/multerConfig');
 const fileHandler = require('../src/multerConfig/fileHandler');
+const authorize = require('../middlewares/authorization');
 
-route.post('/file/:model',   
+route.post('/file/:model', 
+    authorize(['lecturer']),
     upload.single("file"),              //upload file vào storage 
     fileHandler.handle_import_files,    //lấy dữ liệu từ file rồi xử lý sau đó đưa vào database 
     fileController.importFile           //Xuất kết quả trả về 

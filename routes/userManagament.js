@@ -1,6 +1,7 @@
 const express = require('express');
 const route = express.Router();
 const userController = require('../controllers/userController');
+const authorize = require('../middlewares/authorization');
 
 route.get('/user',userController.readUser);
 route.get('/user/:id',userController.getUserById);
