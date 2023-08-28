@@ -101,27 +101,32 @@ const topicModel = {
                 const topic = {id: topicDoc.id, ...topicDoc.data()};
                 topicsData.push(topic);
             });
-        
-            //Lấy số lượng sinh viên đăng ký thành công của từng đề tài sau đó thêm vào từng item đề tài
-            topicsData = await Promise.all(topicsData.map(async (topic, index) => {
-                const studentJoinThisTopic = await this.getStudentsInTopic(topic.id);
-                return {...topic, number_of_student_registrations: studentJoinThisTopic.length};
-            }))
 
-            //Truyền dữ liệu tạo chart
-            const labels = [];
-            const dataNumbers = []; 
-            topicsData.forEach((topic, index) => {
-                labels.push(topic.name);
-                dataNumbers.push(topic.number_of_student_registrations);
+            //Lấy số lượng sinh viên đã đăng ký đề tài thành công
+            let number_of_students_successfully_registered = 0;
+            topicsData.forEach(item=>{
+                if(item.status === true){
+                    number_of_students_successfully_registered++;
+                }
+            })
+            //Lấy số lượng sinh viên đang chờ duyệt đăng ký đề tài
+            let number_of_students_waiting_for_approval = 0;
+            topicsData.forEach(item=>{
+                if(item.status === 'approved'){
+                    number_of_students_waiting_for_approval++;
+                }
             })
             //lấy số sinh viên trong môn học
             const subjectModel = require('./subjectModel');
             const stdInSubject = await subjectModel.getStudentsInSubject(subjectId);
             const number_of_student_in_subject = stdInSubject.length;
-        
+            //Lấy số lượng sinh viên chưa đăng ký
+            let number_of_students_unregistered = number_of_student_in_subject - number_of_students_successfully_registered - number_of_students_waiting_for_approval;
+
+            //Truyền dữ liệu tạo chart
+            const dataNumbers = [number_of_students_successfully_registered , number_of_students_unregistered , number_of_students_waiting_for_approval];
             const chartHandler = require('../src/chart/chartHandler');
-            const pathChart = await chartHandler.createChart(labels,dataNumbers,number_of_student_in_subject);
+            const pathChart = await chartHandler.createChart(dataNumbers);
             return pathChart;
         }catch(err){
             return {code: "Topics error", msg: "An error occurred during processing"};
