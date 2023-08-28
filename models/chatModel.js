@@ -37,17 +37,20 @@ const chatModel = {
                 }  
             });
             let data = [];
-            if (chatRooms) {
-                data = await Promise.all(chatRooms.chat.map(async (msg) => {
-                    const userId = msg.userId;
-                    const userModel = require('./userModel');
-
-                    const userInf = await userModel.getUserById(userId); // Await the getUserById function
-                    msg.userInf = userInf;
-
-                    return msg; // Return the modified message object
-                }));
-                return data;
+            if (chatRooms ) {
+                if(chatRooms.chat[0] !== "empty_message"){
+                    data = await Promise.all(chatRooms.chat.map(async (msg) => {
+                        const userId = msg.userId;
+                        const userModel = require('./userModel');
+    
+                        const userInf = await userModel.getUserById(userId); // Await the getUserById function
+                        msg.userInf = userInf;
+    
+                        return msg; // Return the modified message object
+                    }));
+                    chatRooms.chat = data;
+                }         
+                return chatRooms;
             } else {
                 return { code: 2, msg: 'Chat room not found' };
             }
@@ -63,6 +66,7 @@ const chatModel = {
 
             //Lấy đoạn chat cũ sau đó thêm msg mới vào
             const chatRoom = await this.getChatRoomBySubjectId(subjectId);
+            console.log(chatRoom)
             if (chatRoom) {    
                 // Cập nhật chat trong cơ sở dữ liệu
                 const newMessage = {
@@ -70,6 +74,7 @@ const chatModel = {
                     message: msg,
                     timestamp: admin.database.ServerValue.TIMESTAMP,
                 }
+                console.log(chatRoom)
                 const newMessageIndex = Object.keys(chatRoom.chat).length;
                 if(chatRoom.chat[0] == "empty_message"){
                     chatRoom.chat[0] = newMessage; // Thêm tin nhắn mới
