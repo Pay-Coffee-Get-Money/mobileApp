@@ -91,7 +91,7 @@ const chatModel = {
                     message: msg,
                     timestamp: admin.database.ServerValue.TIMESTAMP,
                 }
-                return oldMsg;
+                console.log(oldMsg);
                 if(oldMsg[0] === 'empty_message'){
                     await chatRoomsRef.child(chatRoomId).child('chat').update([newMessage]);// Thêm tin nhắn mới
                 }else{
