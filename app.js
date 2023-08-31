@@ -76,15 +76,19 @@ const checkDeadline = async ()=>{
                     const subjectModel = require('./models/subjectModel');
                     const subject = await subjectModel.getSubjectById(item.subjectId);
                     if(subject.code == 'Subject reading err'){
-                        return null
+                        return null;
                     }else{
-                        const remainingDays = calculateDaysToNow(subject.deadline_topic.trim());
-                        return { 
-                            ...item, 
-                            subjectName : subject.name,
-                            deadline_topic : subject.deadline_topic,
-                            remaining_days : Math.floor(remainingDays)
-                        };
+                        if(subject.deadline_topic !== undefined){
+                            const remainingDays = calculateDaysToNow(subject.deadline_topic.trim());
+                            return { 
+                                ...item, 
+                                subjectName : subject.name,
+                                deadline_topic : subject.deadline_topic,
+                                remaining_days : Math.floor(remainingDays)
+                            };
+                        }else{
+                            return null;
+                        }
                     }
                 }))
             
